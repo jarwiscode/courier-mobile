@@ -800,3 +800,9 @@
 720 http fetch POST 200 https://registry.npmjs.org/-/npm/v1/security/advisories/bulk 326ms
 721 silly audit report {}
 722 http fetch GET 200 https://registry.npmjs.org/@zeit/schemas/-/schemas-2.36.0.tgz 559ms (cache miss)
+723 verbose cwd /Users/mr.dzh/Documents/RAT/dashboard
+724 verbose os Darwin 24.5.0
+725 verbose node v22.17.0
+726 verbose npm  v11.6.2
+727 verbose exit 0
+728 info ok
