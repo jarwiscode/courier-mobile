@@ -1,0 +1,23 @@
+0 verbose cli /Users/mr.dzh/.nvm/versions/node/v22.17.0/bin/node /Users/mr.dzh/.nvm/versions/node/v22.17.0/bin/npm
+1 info using npm@11.6.2
+2 info using node@v22.17.0
+3 silly config load:file:/Users/mr.dzh/.nvm/versions/node/v22.17.0/lib/node_modules/npm/npmrc
+4 silly config load:file:/private/var/folders/3w/6ts76qf539d3q7r68hfxdmqh0000gn/T/.create-expo-app/template-cache/.npmrc
+5 silly config load:file:/Users/mr.dzh/.npmrc
+6 silly config load:file:/Users/mr.dzh/.nvm/versions/node/v22.17.0/etc/npmrc
+7 verbose title npm pack expo-template-default@latest
+8 verbose argv "pack" "expo-template-default@latest" "--dry-run" "--json"
+9 verbose logfile logs-max:10 dir:/Users/mr.dzh/Documents/RAT/.npm-cache/_logs/2025-11-16T16_12_48_108Z-
+10 verbose logfile /Users/mr.dzh/Documents/RAT/.npm-cache/_logs/2025-11-16T16_12_48_108Z-debug-0.log
+11 silly logfile done cleaning log files
+12 http fetch GET 200 https://registry.npmjs.org/expo-template-default 400ms (cache miss)
+13 http cache https://registry.npmjs.org/expo-template-default 4ms (cache hit)
+14 http cache https://registry.npmjs.org/expo-template-default/-/expo-template-default-54.0.48.tgz 0ms (cache hit)
+15 silly tarball no local data for https://registry.npmjs.org/expo-template-default/-/expo-template-default-54.0.48.tgz. Extracting by manifest.
+16 http fetch GET 200 https://registry.npmjs.org/expo-template-default/-/expo-template-default-54.0.48.tgz 65ms (cache miss)
+17 verbose cwd /private/var/folders/3w/6ts76qf539d3q7r68hfxdmqh0000gn/T/.create-expo-app/template-cache
+18 verbose os Darwin 24.5.0
+19 verbose node v22.17.0
+20 verbose npm  v11.6.2
+21 verbose exit 0
+22 info ok

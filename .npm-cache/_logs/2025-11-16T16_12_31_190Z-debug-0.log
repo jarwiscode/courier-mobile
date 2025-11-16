@@ -1,0 +1,36 @@
+0 verbose cli /Users/mr.dzh/.nvm/versions/node/v22.17.0/bin/node /Users/mr.dzh/.nvm/versions/node/v22.17.0/lib/node_modules/npm/bin/npm-cli.js
+1 info using npm@11.6.2
+2 info using node@v22.17.0
+3 silly config load:file:/Users/mr.dzh/.nvm/versions/node/v22.17.0/lib/node_modules/npm/npmrc
+4 silly config load:file:/Users/mr.dzh/Documents/RAT/.npmrc
+5 silly config load:file:/Users/mr.dzh/.npmrc
+6 silly config load:file:/Users/mr.dzh/.nvm/versions/node/v22.17.0/etc/npmrc
+7 verbose title npm exec create-expo-app courier-mobile --template
+8 verbose argv "exec" "--" "create-expo-app" "courier-mobile" "--template"
+9 verbose logfile logs-max:10 dir:/Users/mr.dzh/Documents/RAT/.npm-cache/_logs/2025-11-16T16_12_31_190Z-
+10 verbose logfile /Users/mr.dzh/Documents/RAT/.npm-cache/_logs/2025-11-16T16_12_31_190Z-debug-0.log
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+13 http fetch GET 200 https://registry.npmjs.org/npm 150ms
+14 http fetch GET 200 https://registry.npmjs.org/create-expo-app 629ms (cache miss)
+15 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+16 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+17 silly idealTree buildDeps
+18 silly fetch manifest create-expo-app@3.5.3
+19 silly packumentCache full:https://registry.npmjs.org/create-expo-app cache-miss
+20 http fetch GET 200 https://registry.npmjs.org/create-expo-app 163ms (cache miss)
+21 silly packumentCache full:https://registry.npmjs.org/create-expo-app set size:undefined disposed:false
+22 silly placeDep ROOT create-expo-app@3.5.3 OK for:  want: 3.5.3
+23 silly reify moves {}
+24 silly audit bulk request { 'create-expo-app': [ '3.5.3' ] }
+25 http cache create-expo-app@https://registry.npmjs.org/create-expo-app/-/create-expo-app-3.5.3.tgz 0ms (cache hit)
+26 silly tarball no local data for create-expo-app@https://registry.npmjs.org/create-expo-app/-/create-expo-app-3.5.3.tgz. Extracting by manifest.
+27 http fetch GET 200 https://registry.npmjs.org/create-expo-app/-/create-expo-app-3.5.3.tgz 50ms (cache miss)
+28 http fetch POST 200 https://registry.npmjs.org/-/npm/v1/security/advisories/bulk 319ms
+29 silly audit report {}
+30 verbose cwd /Users/mr.dzh/Documents/RAT
+31 verbose os Darwin 24.5.0
+32 verbose node v22.17.0
+33 verbose npm  v11.6.2
+34 verbose exit 0
+35 info ok

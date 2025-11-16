@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Дашборд отслеживания курьеров</title>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <style>
+      body { margin: 0; font-family: -apple-system, system-ui, Segoe UI, Roboto, sans-serif; background: #0b0f14; color: #e6eef7; }
+      header { padding: 12px 16px; background: #0f1520; border-bottom: 1px solid #1b2533; display: flex; align-items: center; justify-content: space-between; }
+      header h1 { font-size: 16px; margin: 0; }
+      .container { display: grid; grid-template-columns: 320px 1fr; height: calc(100vh - 56px); }
+      .sidebar { border-right: 1px solid #1b2533; overflow: auto; background: #0f1520; }
+      .sidebar h2 { font-size: 13px; margin: 12px 12px 6px; color: #9fb3c8; }
+      .list { padding: 8px; }
+      .card { background: #0b1220; border: 1px solid #1b2533; border-radius: 10px; padding: 10px; margin-bottom: 8px; cursor: pointer; }
+      .card:hover { border-color: #244767; }
+      .meta { font-size: 12px; color: #9fb3c8; }
+      .map { height: 100%; width: 100%; }
+      .legend { position: absolute; right: 12px; top: 64px; background: rgba(15,21,32,0.9); border: 1px solid #1b2533; border-radius: 8px; padding: 10px; font-size: 12px; }
+      a { color: #88bfff; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Дашборд отслеживания курьеров</h1>
+      <div class="meta">Реальное время через WebSocket</div>
+    </header>
+    <div class="container">
+      <aside class="sidebar">
+        <h2>Курьеры</h2>
+        <div id="list" class="list"></div>
+      </aside>
+      <main>
+        <div id="map" class="map"></div>
+        <div class="legend">
+          <div><strong>Легенда</strong></div>
+          <div>• Синий маркер — активный курьер</div>
+          <div>• Стрелка показывает направление</div>
+        </div>
+      </main>
+    </div>
+
+    <script src="./config.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-lGmQxf2NObV7hth0GaVxbLyqFRkdy0aH6B97+v3l1N3hD1acqQovj0YQY0L6mC1W" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+      const apiBase = typeof window !== 'undefined' && window.BACKEND_URL ? window.BACKEND_URL : '';
+
+      const map = L.map('map', { zoomControl: true }).setView([20, 0], 2);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap contributors'
+      }).addTo(map);
+
+      const markers = {}; // courierId -> marker
+      const listEl = document.getElementById('list');
+
+      function formatNum(n, digits = 4) {
+        if (typeof n !== 'number' || !Number.isFinite(n)) return '-';
+        return n.toFixed(digits);
+      }
+      function formatTs(ts) {
+        try {
+          const d = new Date(ts);
+          return d.toLocaleString();
+        } catch { return String(ts); }
+      }
+      function renderList(couriers) {
+        listEl.innerHTML = '';
+        couriers
+          .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0))
+          .forEach(c => {
+            const div = document.createElement('div');
+            div.className = 'card';
+            div.innerHTML = `
+              <div><strong>${c.courierId}</strong> ${c.jobId ? '· ' + c.jobId : ''}</div>
+              <div class="meta">
+                ${formatNum(c.lat, 5)}, ${formatNum(c.lng, 5)}
+                · скорость ${c.speed ?? '-'} м/с
+                · курс ${c.heading ?? '-'}
+                · батарея ${c.battery != null ? Math.round(c.battery * 100) + '%' : '-'}
+                · ${formatTs(c.timestamp)}
+              </div>
+            `;
+            div.onclick = () => {
+              if (Number.isFinite(c.lat) && Number.isFinite(c.lng)) {
+                map.setView([c.lat, c.lng], 15);
+              }
+            };
+            listEl.appendChild(div);
+          });
+      }
+
+      function upsertMarker(loc) {
+        const key = loc.courierId;
+        const latlng = [loc.lat, loc.lng];
+        const heading = typeof loc.heading === 'number' ? loc.heading : 0;
+        const rotation = `rotate(${heading}deg)`;
+
+        const iconHtml = `
+          <div style="width:24px;height:24px;transform:${rotation}">
+            <svg viewBox="0 0 24 24" width="24" height="24">
+              <path d="M12 2 L15 14 L12 11 L9 14 Z" fill="#4da3ff" />
+            </svg>
+          </div>
+        `;
+        const icon = L.divIcon({ html: iconHtml, className: '', iconSize: [24, 24], iconAnchor: [12, 12] });
+
+        if (markers[key]) {
+          markers[key].setLatLng(latlng);
+          markers[key].setIcon(icon);
+        } else {
+          markers[key] = L.marker(latlng, { icon }).addTo(map).bindPopup(`<b>${key}</b>`);
+        }
+      }
+
+      const socket = io(apiBase || undefined, { transports: ['websocket'], upgrade: false });
+
+      socket.on('connect', () => {
+        console.log('Connected to server', apiBase || '(same origin)');
+      });
+      socket.on('snapshot', ({ couriers }) => {
+        if (Array.isArray(couriers)) {
+          renderList(couriers);
+          couriers.forEach(upsertMarker);
+        }
+      });
+      socket.on('location', (loc) => {
+        upsertMarker(loc);
+        fetch(`${apiBase}/v1/couriers`).then(r => r.json()).then(d => {
+          if (Array.isArray(d.couriers)) renderList(d.couriers);
+        }).catch(() => {});
+      });
+    </script>
+  </body>
+  </html>
+
+
